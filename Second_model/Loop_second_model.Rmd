@@ -1,0 +1,565 @@
+---
+title: "Loop_second_model"
+author: "Gemma Izquierdo"
+date: "2026-08-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This .Rmd contains the code to run the Kalman filter across the 6 trials and 5 channels for each combination of p and fs. The parameters are stored in lists, which will be used in the analysis.
+
+```{r}
+library(signal)
+library(dlm)
+library(readxl)
+ordenSensores <- read_excel("ordenSensores.xls", col_names = FALSE) # read .xls with the names of the electrodes
+names(ordenSensores)<-c("electrode")
+
+EEGtrial <- readRDS("matrices.rds") # read EEG data
+trials <- c(1,2,4,5,21,223) # vector with trials to consider
+channels_index <- c(24, 27,  8, 57, 39)
+source("Functions.R")
+```
+
+This .rmd contains the loops to store the parameters estimated for each set of signals in function of the sampling frequency (fs) and number of neighbors (p-1).
+
+# AR(1)
+# fs=250
+## p=1
+
+```{r}
+p <- 1 
+parameters_trials_notfull_p1_phi_250 <- list() # list to store the parameters estimated with p = 1 and sampling frequency = 250 Hz
+chan_names<-ordenSensores$electrode 
+npar<-(p^2+p+2)/2+1 # number of parameters to estimate
+
+for (trial in trials){
+
+  parameters_trials_notfull_p1_phi_250[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]]) # EEG data from trial selected
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE) # computation of correlation matrix for channel ch and ordering in function of the correlation value (reference channel ch is the first one)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+
+    ds <- 4 # factor by which the signal is downsampled
+    y <- eeg_data[, idx[1:p]] # reference signal + (p-1) most correlated signals
+    y <- downsample(y, ds)
+
+    # Maximum likelihood estimation
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar), # initialization of parameters
+      build = buildSignalnotfullphineq0_p1,  # function to build the filter
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p1_phi_250[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=250
+## p=3
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 3
+parameters_trials_notfull_p3_phi_250 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p3_phi_250[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 4
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p3_phi_250[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=250
+## p=5
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 5
+parameters_trials_notfull_p5_phi_250 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p5_phi_250[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 4
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p5_phi_250[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=250
+## p=5
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 7
+parameters_trials_notfull_p7_phi_250 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p7_phi_250[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 4
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p7_phi_250[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=500
+## p=1
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 1
+parameters_trials_notfull_p1_phi_500 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p1_phi_500[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+
+    ds <- 2
+    y <- eeg_data[, idx[1:p]]
+    y <- downsample(y, ds)
+    #colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0_p1,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p1_phi_500[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=500
+## p=3
+
+```{r}
+library(signal)
+library(dlm)
+
+trials <- c(1,2,4,5,21,223)
+p <- 3
+parameters_trials_notfull_p3_phi_500 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p3_phi_500[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 2
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p3_phi_500[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=500
+## p=5
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 5
+parameters_trials_notfull_p5_phi_500 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p5_phi_500[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 2
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p5_phi_500[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=500
+## p=7
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 7
+parameters_trials_notfull_p7_phi_500 <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p7_phi_500[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    ds <- 2
+    y <- eeg_data[, idx[1:p]]
+    y <- apply(y, 2, function(x) downsample(x, ds))
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p7_phi_500[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=1000
+## p=1
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 1
+parameters_trials_notfull_p1_phi <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p1_phi[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+
+    y <- eeg_data[, idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0_p1,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p1_phi[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=1000
+## p=3
+
+```{r}
+library(signal)
+library(dlm)
+
+trials <- c(1,2,4,5,21,223)
+p <- 3
+parameters_trials_notfull_p3_phi <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p3_phi[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    y <- eeg_data[, idx[1:p]]
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p3_phi[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=1000
+## p=5
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 5
+parameters_trials_notfull_p5_phi <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p5_phi[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    y <- eeg_data[, idx[1:p]]
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p5_phi[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+# AR(1)
+# fs=1000
+## p=7
+
+```{r}
+trials <- c(1,2,4,5,21,223)
+p <- 7
+parameters_trials_notfull_p7_phi <- list()
+chan_names<-ordenSensores$electrode
+npar<-(p^2+p+2)/2+1
+
+for (trial in trials){
+
+  parameters_trials_notfull_p7_phi[[as.character(trial)]] <- list()
+
+  eeg_data <- t(EEGtrial[[trial]])
+
+  for (ch in channels_index){
+
+    cat("\nTrial:", trial, "Channel:", ch, "-", chan_names[ch])
+
+    idx <- order(cor(eeg_data)[,ch], decreasing = TRUE)
+
+    for (i in 1:p){
+      cat("\n    Channel:", idx[i])
+    }
+    
+    y <- eeg_data[, idx[1:p]]
+    colnames(y) <- chan_names[idx[1:p]]
+
+    fitSignal <- dlmMLE(
+      y,
+      parm = rep(0, npar),
+      build = buildSignalnotfullphineq0,
+      hessian = TRUE,
+      control = list(maxit = 500)
+    )
+
+    parameters_trials_notfull_p7_phi[[as.character(trial)]][[ch]] <- fitSignal$par
+  }
+}
+```
+
+
