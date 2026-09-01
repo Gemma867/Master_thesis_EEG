@@ -37,7 +37,7 @@ parameters_trials_notfull_p7_phi_250<-readRDS("parameters_trials_notfull_p7_phi_
 parameters_trials_notfull_p1_phi_250<-readRDS("parameters_trials_notfull_p1_phi_250.rds")
 
 channels_index <- c(24, 27,  8, 57, 39)
-trials <-  c(1, 2, 4, 5, 23, 221)
+trials <-  c(1, 2, 4, 5, 21, 223)
 ```
 
 ACF subplots for trial_n (to choose from 1 to 6) and p = 1 for all sampling frequencies.
