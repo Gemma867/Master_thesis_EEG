@@ -5,8 +5,8 @@ library(dlm)
 
 EEGtrial <- readRDS("matrices.rds")
 
-parameters_trials_notfull_p7_phi<-readRDS("parameters_trials_notfull_p7_phi.rds")
-parameters_6trials_junt <- readRDS("parameters_6trials_junt.rds")
+parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds")
+parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds")
 
 channels_index <- c(24, 27,  8, 57, 39)
 trials <-  c(1, 2, 4, 5, 21, 223)
