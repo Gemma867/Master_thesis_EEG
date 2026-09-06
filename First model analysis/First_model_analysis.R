@@ -404,7 +404,7 @@ ggplot(df_channels, aes(x = x, y = y, color = Group)) +
 
 #### ACF
 
-chs <- seq(1, 48, by = 3)   # 1, 4, 7, ..., 58 (20 channels)
+chs<-c(31,34,43,46) # Fpz, T8, Fp1, P8
 
 par(mfrow = c(4, 4),
     mar = c(3, 3, 3, 1),  
