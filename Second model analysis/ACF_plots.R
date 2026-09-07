@@ -58,7 +58,7 @@ for (ch in channels_index) { # loop across the 5 channels
   for (m in models) { # loop across the 3 models (different fs)
     
     y <- eeg_data[, idx[1:p]]
-    y <- downsample(y, m$ds)
+    y <- downsample(y, m$ds) # Downsample of the signal by the factor ds of the model
     
     # Build the filtered signal with the corresponding parameters
     dlmM1 <- buildSignalnotfullphineq0_p1(
