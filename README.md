@@ -4,7 +4,7 @@ This repository contains the R code, saved model parameters, and figures corresp
 
 The parameters estimated for all models are stored in each corresponding directory. Every directory contains the necessary files to run the code except for the mentioned data.
 
-The project is organized into four main directories:
+The thesis repository is organized into four main directories:
 
 ```text
 .
