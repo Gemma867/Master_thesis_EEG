@@ -1,5 +1,5 @@
 
-# This .R file contains the code to obtain the boxplots of phi, Q / R, Var(x) / R, and the scatter plot of R_250/R_500 against Q_250/Q_500.
+# This .R file contains the code to obtain the boxplots of phi, Q / R, Var(x) / R, and the scatter plot of R_250/R_500 against Q_250/Q_500, placed in the results analysis for p=1.
 
 library(ggplot2)
 library(dplyr)
@@ -7,9 +7,9 @@ library(gsignal)
 library(dlm)
 library(tidyr)
 
-parameters_trials_notfull_p1_phi<-readRDS("parameters_trials_notfull_p1_phi.rds")
-parameters_trials_notfull_p1_phi_250<-readRDS("parameters_trials_notfull_p1_phi_250.rds")
-parameters_trials_notfull_p1_phi_500<-readRDS("parameters_trials_notfull_p1_phi_500.rds")
+parameters_trials_notfull_p1_phi<-readRDS("parameters/parameters_trials_notfull_p1_phi.rds")
+parameters_trials_notfull_p1_phi_250<-readRDS("parameters/parameters_trials_notfull_p1_phi_250.rds")
+parameters_trials_notfull_p1_phi_500<-readRDS("parameters/parameters_trials_notfull_p1_phi_500.rds")
 source("Functions.R")
 EEGtrial <- readRDS("matrices.rds")
 
