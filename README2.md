@@ -1,6 +1,6 @@
 # README
 
-This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis. The original EEG data is not included in the repository
+This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis. The original EEG data (`matrices.rds` in the code) is not included in the repository. The parameters estimated for all models are stored in each corresponding directory.  Every directory contains the necessary files to run the code except for the EEG data.
 
 The project is organized into four main directories:
 
@@ -38,7 +38,6 @@ Comparison/
 ├── ACF_comparison.R
 ├── Q_Q_plots_comparison.R
 ├── VRR_plots_comparison.R
-├──
 ├── parameters/
     └── [.rds of parameters]
 └── figures/
@@ -63,16 +62,16 @@ First model analysis/
 ### Files
 
 - **`First_model_analysis.R`**  
-  Contains the code used to analyse the results of the first model and generate the corresponding analyses and figures.
+  Contains the code used to analyse the results of the first model and generate the corresponding figures.
 
 - **`Functions.R`**  
-  Contains the R functions required by the first-model analyses.
+  Contains the R functions to build the Kalman filters of all models. It is a common file to all models.
 
 - **`Loop_first_model.R`**  
-  Contains the code used to run the first model over the selected trials/channels.
-
+  Contains the code used to obtain the estimated parameters of the first model for all 64 channels of the six analysed trials.
+  
 - **`parameters_6trials_junt.rds`**  
-  RDS file containing the saved model parameters for the six analysed trials.
+  RDS file containing the saved model parameters for 64 channels and the six analysed trials.
 
 - **`figures/`**  
   Contains the figures generated from the first-model analysis.
@@ -98,10 +97,10 @@ Second model analysis/
 ### Files
 
 - **`Functions.R`**  
-  Contains the R functions required for fitting and analysing the second model.
+  Contains the R functions to build the Kalman filters of all models. It is a common file to all models.
 
 - **`Loop_second_model.R`**  
-  Contains the code used to run the second model over the selected trials/channels.
+  Contains the code used to obtain the estimated parameters of the second model for the five channels of the six analysed trials.
 
 - **`ACF_plots.R`**  
   Contains the code used to generate the autocorrelation function (ACF) plots for analysing the model residuals.
@@ -110,10 +109,10 @@ Second model analysis/
   Contains the code used to analyse and plot the process-noise covariance matrices and their associated results.
 
 - **`Q_R_phi_analysis_p1.R`**  
-  Contains the analysis of the estimated model parameters, including the process covariance (`Q`), measurement covariance (`R`), and autoregressive parameter (`phi`), for the corresponding model configuration.
+  Contains the code to generate of the plots corresponding to the analysis of the estimated model parameters, including the process covariance (`Q`), measurement covariance (`R`), and autoregressive parameter (`phi`).
 
 - **`VRR_and_power_reduction.R`**  
-  Contains the analysis of variance reduction and frequency-band power reduction resulting from the model.
+  Contains the code to generate the plots of th analysis of variance reduction and frequency-band power reduction resulting from the model.
 
 - **`parameters/`**  
   Contains the saved parameters obtained from the second-model fitting procedure.
