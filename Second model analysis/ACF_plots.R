@@ -208,7 +208,6 @@ for (ch in channels_index) {
       plot = FALSE
     )
     
-    # Extract confidence interval from acf object
     conf <- 1.96 / sqrt(acf_result$n.used)
     
     acf_data[[length(acf_data) + 1]] <- data.frame(
