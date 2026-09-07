@@ -14,6 +14,7 @@ trials <- c(1,2,4,5,21,223) # vector with trials to consider
 channels_index <- c(24, 27,  8, 57, 39)  # channel indexes to consider
 source("Functions.R")
 
+# A loop for each combination of fs and p is included.
 # Every loop is the same except for the p, the name of the list that stores the parameters,
 # ds, and the function that builds the filter (which can be buildSignalnotfullphineq0_p1 or buildSignalnotfullphineq0).
 # At the beginning of the loop, the fs and p is indicated.
