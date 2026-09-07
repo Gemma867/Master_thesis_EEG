@@ -2,7 +2,7 @@
 
 This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis. The original EEG data (matrices.rds) and the .xls file containing the electrode names in the same order as the EEG data (ordenSensores.xls) are not included in this repository. 
 
-The parameters estimated for all models are stored in each corresponding directory.  Every directory contains the necessary files to run the code except for the EEG data.
+The parameters estimated for all models are stored in each corresponding directory. Every directory contains the necessary files to run the code except for the mentioned data.
 
 The project is organized into four main directories:
 
