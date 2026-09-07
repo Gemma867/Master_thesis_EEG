@@ -28,7 +28,7 @@ Exploratory analysis/
 ### Files
 
 - **`exploratory_analysis`**
-  Contains the code used to generate the exploratory-analysis results and the corresponding figures
+  Contains the code used to generate the exploratory analysis results and the corresponding figures.
 
 - **`figures/`**  
   Contains the figures generated for the exploratory analyses.
