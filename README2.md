@@ -1,6 +1,6 @@
-# Project README
+# README
 
-This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis.
+This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis. The original EEG data is not included in the repository
 
 The project is organized into four main directories:
 
@@ -18,7 +18,7 @@ The `Exploratory analysis` directory contains the code used to perform the explo
 
 ```text
 Exploratory analysis/
-├── [R script]
+├── exploratory_analysis.R
 └── figures/
     └── [generated figures]
 ```
@@ -31,11 +31,18 @@ The `figures` directory contains the figures produced by this analysis.
 
 ## 2. Comparison
 
-The `Comparison` directory contains the analyses used to compare the results obtained from the different models and/or analysis conditions.
+The `Comparison` directory contains the code used to produce and compare the results obtained from the two models with `p = 7`, sampling frequency of 1000 Hz, trials `1, 2, 4, 5, 21, 223`, and the 64 channels.
 
 ```text
 Comparison/
-└── ...
+├── ACF_comparison.R
+├── Q_Q_plots_comparison.R
+├── VRR_plots_comparison.R
+├──
+├── parameters/
+    └── [.rds of parameters]
+└── figures/
+    └── [generated figures]
 ```
 
 ---
