@@ -1,4 +1,4 @@
-# README
+# Master_thesis_EEG
 
 This repository contains the R code, saved model parameters, and figures corresponding to the different stages of the analysis. The original EEG data (`matrices.rds` in the code) is not included in the repository. The parameters estimated for all models are stored in each corresponding directory.  Every directory contains the necessary files to run the code except for the EEG data.
 
