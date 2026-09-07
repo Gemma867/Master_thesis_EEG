@@ -178,15 +178,10 @@ df_long <- df_long %>%
   group_by(channel) %>%
   mutate(amplitude_offset = amplitude)
 
-# Set y-axis limits
-my_ymin <- -20
-my_ymax <- 20
-
 ggplot(df_long, aes(x = time, y = amplitude_offset)) +
   geom_line(color = "blue") +
   facet_wrap(~electrode, ncol = 1, scales = "free_y", strip.position = "left") +
   scale_x_continuous(limits = c(0, 3000)) +
-  #scale_y_continuous(limits = c(my_ymin, my_ymax)) +
   geom_vline(xintercept = 1000, linetype = "dashed", color = "red", linewidth = 0.8) +
   geom_hline(yintercept = 0, linetype = "dashed", color = "green", linewidth = 0.8) +
   theme_minimal() +
@@ -210,7 +205,7 @@ mean_z <- Reduce("+", z_df) / length(z_df)
 # Transform back to correlations
 mean_cor <- tanh(mean_z)
 
-chan_coords$corFP1 <- mean_cor[43,]
+chan_coords$corFP1 <- mean_cor[43,] # Fp1 channel mean correlation
 
 # Fp1 mean correlation values with other electrodes plot
 ggplot(chan_coords, aes(x = x, y = y, color = corFP1)) +
