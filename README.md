@@ -59,7 +59,7 @@ Comparison/
   Contains the code used to generate the Q-Q plots of the residuals.
   
 - **`VRR_plots_comparison.R`**
-    Contains the code to generate the plots of th analysis of variance reduction and frequency-band power reduction resulting from the model.
+    Contains the code to generate the plots of the analysis of variance reduction and frequency-band power reduction resulting from the denoised signal.
 
 - **`Functions.R`**  
   Contains the R functions to build the Kalman filters of all models. It is a common file to all models.
