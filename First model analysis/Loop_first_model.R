@@ -27,16 +27,16 @@ for (trial in trials){
       cat("\n    Channel:", idx[i])
     }
     
-    y <- eeg_data[, idx[1:p]] # Select p signals
+    y <- eeg_data[, idx[1:p]] # Select p signals and define the observation vector (3000 rows (time samples) and 7 columns (reference + 6 most correlated))
     colnames(y) <- chan_names[idx[1:p]]
     
     # Maximum Likelihood estimation
     fitSignal <- dlmMLE(
-      y,
-      parm = rep(0, npar),
-      build = buildSignal,
+      y, # signal to fit 
+      parm = rep(0, npar), # initialization of parameters
+      build = buildSignal, # function to build the Kalman filter
       hessian = TRUE,
-      control = list(maxit = 500)
+      control = list(maxit = 500) # maximum iterations
     )
     
     parameters_6trials_junt[[as.character(trial)]][[ch]] <- fitSignal$par
