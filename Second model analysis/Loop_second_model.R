@@ -11,7 +11,7 @@ ordenSensores <- read_excel("ordenSensores.xls", col_names = FALSE) # read .xls 
 names(ordenSensores)<-c("electrode")
 EEGtrial <- readRDS("matrices.rds") # read EEG data
 trials <- c(1,2,4,5,21,223) # vector with trials to consider
-channels_index <- c(24, 27,  8, 57, 39)
+channels_index <- c(24, 27,  8, 57, 39)  # channel indexes to consider
 source("Functions.R")
 
 # Every loop is the same except for the p, the name of the list that stores the parameters,
