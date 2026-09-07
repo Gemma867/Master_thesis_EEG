@@ -10,6 +10,7 @@ source("Functions.R")
 trials <- c(1,2,4,5,21,223)
 EEGtrial<-readRDS("matrices.rds")
 parameters_6trials_junt <- readRDS("parameters_6trials_junt.rds")
+p<-7
 
 #### Violin plot of VRR 
 
