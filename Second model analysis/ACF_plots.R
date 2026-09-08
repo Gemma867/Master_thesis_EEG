@@ -287,3 +287,134 @@ pl<-ggplot(acf_df, aes(x = lag, y = acf)) +
   ) 
 
 pl
+
+#### Ljung-Box test
+
+p_values <- c(1, 3, 5, 7)
+
+# All parameters are grouped in a list.
+models <- list(
+  list(
+    ds = 1,
+    pars = list(
+      parameters_trials_notfull_p1_phi,
+      parameters_trials_notfull_p3_phi,
+      parameters_trials_notfull_p5_phi,
+      parameters_trials_notfull_p7_phi
+    ),
+    title = "1000 Hz"
+  ),
+  list(
+    ds = 2,
+    pars = list(
+      parameters_trials_notfull_p1_phi_500,
+      parameters_trials_notfull_p3_phi_500,
+      parameters_trials_notfull_p5_phi_500,
+      parameters_trials_notfull_p7_phi_500
+    ),
+    title = "500 Hz"
+  ),
+  list(
+    ds = 4,
+    pars = list(
+      parameters_trials_notfull_p1_phi_250,
+      parameters_trials_notfull_p3_phi_250,
+      parameters_trials_notfull_p5_phi_250,
+      parameters_trials_notfull_p7_phi_250
+    ),
+    title = "250 Hz"
+  )
+)
+
+# The test evaluates up to lag 500
+lb_lags <- 1:500
+
+ljung_results <- list()
+
+for (trial_n in seq_along(trials)) {
+  
+  eeg_data <- t(EEGtrial[[trials[trial_n]]])
+  cor_mat <- cor(eeg_data)
+  
+  for (ch in channels_index) {
+    
+    idx <- order(
+      cor_mat[, ch],
+      decreasing = TRUE
+    )
+    
+    for (p_index in seq_along(p_values)) {
+      
+      p <- p_values[p_index]
+      
+      for (m in models) {
+
+        # downsample function differently applied in function of the dimensions
+        if (p == 1) {
+          
+          y <- eeg_data[, idx[1]]
+          y <- downsample(y, m$ds)
+          
+        } else {
+          
+          y <- eeg_data[, idx[1:p]]
+          
+          y <- apply(
+            y,
+            2,
+            downsample,
+            m$ds
+          )
+        }
+        
+        par <- m$pars[[p_index]][[trial_n]][[ch]]
+
+        # Building function to use in function of the p
+        if (p == 1) {
+          dlmM1 <- buildSignalnotfullphineq0_p1(par)
+        } else if (p == 3) {
+          dlmM1 <- buildSignalnotfullphineq0(par)
+        } else if (p == 5) {
+          dlmM1 <- buildSignalnotfullphineq0(par)
+        } else if (p == 7) {
+          dlmM1 <- buildSignalnotfullphineq0(par)
+        }
+        
+        eegSmo <- dlmSmooth(y, dlmM1)
+        
+        signal <- dropFirst(eegSmo$s)
+        
+        if (p == 1) {
+          residuals <- y - signal
+        } else {
+          residuals <- y[, 1] - signal
+        }
+        
+        # Ljung-Box for lags 1 to 500
+        pvals <- sapply(
+          lb_lags,
+          function(h) {
+            Box.test(
+              residuals,
+              lag = h,
+              type = "Ljung-Box"
+            )$p.value
+          }
+        )
+
+        # Store the results
+        ljung_results[[length(ljung_results) + 1]] <- data.frame(
+          trial = trials[trial_n],
+          channel = ordenSensores$electrode[ch],
+          p = p,
+          fs = m$title,
+          lag = lb_lags,
+          p_value = pvals,
+          significant = pvals < 0.05
+        )
+      }
+    }
+  }
+}
+
+ljung_df <- bind_rows(ljung_results) # dataframe with 7 columns. The significant column indicates if the test statistic has a p-value lower than 0.05.
