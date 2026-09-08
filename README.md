@@ -129,7 +129,7 @@ Second model analysis/
   Contains the code used to obtain the estimated parameters of the second model for the five channels of the six analysed trials.
 
 - **`ACF_plots.R`**  
-  Contains the code used to generate the autocorrelation function (ACF) plots for analysing the model residuals.
+  Contains the code used to generate the autocorrelation function (ACF) plots for analysing the model residuals, and to obtain the results to the Ljung-Box test.
 
 - **`Q_Q_plots.R`**  
   Contains the code used to generate the Q-Q plots of the residuals.
