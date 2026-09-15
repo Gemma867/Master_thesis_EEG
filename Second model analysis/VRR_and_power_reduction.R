@@ -9,6 +9,9 @@ library(dplyr)
 library(ggplot2)
 library(gsignal)
 library(dlm)
+library(tidyr)
+library(zoo)
+library(readxl)
 
 EEGtrial <- readRDS("matrices.rds")
 
