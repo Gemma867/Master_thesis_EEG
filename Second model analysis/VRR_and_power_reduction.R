@@ -8,6 +8,7 @@
 library(dplyr)
 library(ggplot2)
 library(gsignal)
+library(dlm)
 
 EEGtrial <- readRDS("matrices.rds")
 
