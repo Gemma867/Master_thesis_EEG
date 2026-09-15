@@ -11,7 +11,8 @@ The thesis repository is organized into four main directories:
 ├── Exploratory analysis/
 ├── Comparison/
 ├── First model analysis/
-└── Second model analysis/
+├── Second model analysis/
+└── Univariate with original data/
 ```
 
 ## 1. Exploratory analysis
