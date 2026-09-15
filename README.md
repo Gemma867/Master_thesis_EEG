@@ -35,9 +35,25 @@ Exploratory analysis/
 
 ---
 
-## 2. Comparison
+## 2. Univariate with original data
 
-The `Comparison` directory contains the code used to produce and compare the results obtained from the two models with `p = 7`, sampling frequency of 1000 Hz, trials `1, 2, 4, 5, 21, 223`, and the 64 channels.
+The `Univariate with original data`directory contains the code used to produce the results obtained from the univariate model fitted to the original data (sampling frequency of 1000 Hz, 760 trials and 64 channels).
+
+### Files
+
+- **`Functions_univariate_original.R`**
+  Contains the code used to build the functions for the local level and AR(1) + noise.
+  
+- **`Univariate_original_fs.R`**
+  Contains the code used to obtain the model parameters estimation.
+  
+- **`Univariate_plot_results.R`**
+  Contains the code used to generate the plots of the parameters estimates and variance reduction results.
+  
+
+## 3. Comparison
+
+The `Comparison` directory contains the code used to produce and compare the results obtained from the two multivariate models with `p = 7`, sampling frequency of 1000 Hz, trials `1, 2, 4, 5, 21, 223`, and the 64 channels.
 
 ```text
 Comparison/
@@ -72,7 +88,7 @@ Comparison/
 
 ---
 
-## 3. First model analysis
+## 4. First model analysis
 
 The `First model analysis` directory contains the code and results associated with the first state-space model.
 
@@ -104,7 +120,7 @@ First model analysis/
 
 ---
 
-## 4. Second model analysis
+## 5. Second model analysis
 
 The `Second model analysis` directory contains the code, saved parameters, and figures associated with the second state-space model.
 
