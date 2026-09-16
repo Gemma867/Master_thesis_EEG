@@ -1,3 +1,11 @@
+library(GGally)
+library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
+library(dplyr)
+library(gsignal)
+library(dlm)
 
 # First model:
 
