@@ -1,7 +1,15 @@
 
 # This .R file contains the code to the functions to build the univariate filters.
 
+library(GGally)
+library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
+library(dplyr)
+library(gsignal)
 library(dlm)
+
 
 # Local level
 
