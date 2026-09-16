@@ -431,17 +431,17 @@ for (ch in chs) {
       cex.main = 1.6)
 }
 
-#### PSD
+#### PSD (power spectral density)
 
 
 library(ggplot2)
 library(patchwork)
 
-chs <- seq(25, 48, by = 3)
+chs <- seq(25, 48, by = 3) # vector with channel indexes to plot
 
 trial <- 1
 eeg_data <- t(matrices[[trial]])
-p <- 7
+p <- 7 # p is always 7
 
 Fs <- 1000  # Sampling frequency
 
@@ -450,10 +450,12 @@ plots <- vector("list", length(chs))
 for (i in seq_along(chs)) {
   
   ch <- chs[i]
-  
+
+  # ordered indexes in function of correlation to the reference channel
   idx <- order(cor(eeg_data)[, ch], decreasing = TRUE)
   y <- eeg_data[, idx[1:p]]
-  
+
+  # Filtering and smoothing
   dlmM1 <- buildSignal(parameters_6trials_junt[[trial]][[ch]])
   eegSmo <- dlmSmooth(y, dlmM1)
   
