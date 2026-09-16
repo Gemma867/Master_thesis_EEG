@@ -1,8 +1,14 @@
 
 # This .R file contains the code to obtain the plots from the unvivariate results analysis with the original frequency and over all the trials (760) and channels (64) available.
 
+library(GGally)
 library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
 library(dplyr)
+library(gsignal)
+library(dlm)
 
 # Boxplot of measurement or process noise covariance per channel
 
