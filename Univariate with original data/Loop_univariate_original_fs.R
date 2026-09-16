@@ -1,6 +1,13 @@
 
 # This .R file contains the code to obtain the parameter estimation of the univariate models with sampling frequency of 1000 Hz.
 
+library(GGally)
+library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
+library(dplyr)
+library(gsignal)
 library(dlm)
 
 # Local level:
