@@ -10,8 +10,8 @@ library(dplyr)
 library(gsignal)
 library(dlm)
 
-source("Functions.R")
-trials <- c(1,2,4,5,21,223)
+source("Functions.R") # Functions to build the filter
+trials <- c(1,2,4,5,21,223) # index of trials selected
 EEGtrial<-readRDS("matrices.rds")
 parameters_6trials_junt <- readRDS("parameters_6trials_junt.rds")
 p<-7
