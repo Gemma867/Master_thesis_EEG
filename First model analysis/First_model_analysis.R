@@ -675,3 +675,197 @@ for (i in idx[1:p]){
 }
 mtext(" Denoised target Signal (red) and most correlated EEG channels",
       outer = TRUE, line=2, cex = 1.4, font = 1)
+
+
+#### Histograms per trial of Spearman's coefficient (to see if monotonic relationship between frequency band power reduction)
+
+
+# Model order
+p <- 7
+Fs <- 1000 # sampling frequency of 1000 Hz
+
+# Frequency bands
+bands <- data.frame(
+  band = c("Delta", "Theta", "Alpha", "Beta"),
+  low  = c(0.5, 4, 8, 13) / Fs,
+  high = c(4, 8, 13, 30) / Fs
+)
+
+# Functions
+band_power <- function(sp, f_low, f_high) {
+  idx <- sp$freq >= f_low & sp$freq < f_high
+  sum(sp$spec[idx])
+}
+
+total_power <- function(sp) {
+  sum(sp$spec)
+}
+
+# Parameters
+pars <- parameters_6trials_junt
+
+# Store results
+results_freq_bands <- list()
+
+
+for (n in seq_along(trials)) {
+  
+  trial <- trials[n]
+  eeg_data <- t(EEGtrial[[trial]])
+  
+  for (ch in 1:64) {
+    
+    # Select the 7 most correlated channels
+    idx <- order(
+      cor(eeg_data)[, ch],
+      decreasing = TRUE
+    )
+    
+    y <- eeg_data[, idx[1:p], drop = FALSE]
+    
+    # Build model with buildSignal
+    dlmM1 <- buildSignal(
+      pars[[n]][[ch]]
+    )
+    
+    # Smooth
+    eegSmo <- dlmSmooth(y, dlmM1)
+    
+    # Reference channel
+    original <- y[, 1]
+    
+    # Denoised signal
+    denoised <- dropFirst(eegSmo$s)
+    
+    # Spectrum
+    sp_orig <- spectrum(
+      original,
+      plot = FALSE,
+      detrend = TRUE
+    )
+    
+    sp_den <- spectrum(
+      denoised,
+      plot = FALSE,
+      detrend = TRUE
+    )
+    
+    # Band powers
+    orig <- mapply(
+      band_power,
+      MoreArgs = list(sp = sp_orig),
+      bands$low,
+      bands$high
+    )
+    
+    den <- mapply(
+      band_power,
+      MoreArgs = list(sp = sp_den),
+      bands$low,
+      bands$high
+    )
+    
+    # Total power
+    orig_total <- total_power(sp_orig)
+    den_total <- total_power(sp_den)
+    
+    # Store results
+    results_freq_bands[[length(results_freq_bands) + 1]] <-
+      data.frame(
+        trial = trial,
+        channel = ch,
+        Fs = Fs,
+        band = bands$band,
+        original = orig,
+        denoised = den,
+        rel_orig = orig / orig_total,
+        rel_denoised = den / den_total,
+        change_pct = 100 * (orig - den) / orig
+      )
+  }
+}
+
+df_plot <- bind_rows(results_freq_bands)
+
+spearman_results <- df_plot %>%
+  mutate(
+    band = factor(
+      band,
+      levels = c("Delta", "Theta", "Alpha", "Beta")
+    )
+  ) %>%
+  arrange(trial, channel, band) %>%
+  group_by(trial, channel) %>%
+  summarise(
+    rho = cor(
+      as.numeric(band),
+      change_pct,
+      method = "spearman"
+    ),
+    .groups = "drop"
+  )
+
+
+spearman_plot <- spearman_results %>%
+  group_by(trial) %>%
+  summarise(
+    rho = mean(rho, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+negative_pct <- spearman_results %>%
+  group_by(trial) %>%
+  summarise(
+    pct_negative = 100 * mean(rho < 0, na.rm = TRUE)
+  )
+
+ggplot(
+  spearman_results,
+  aes(x = rho)
+) +
+  geom_histogram(
+    bins = 10,
+    fill = "steelblue",
+    colour = "black"
+  ) +
+  facet_wrap(
+    ~ trial,
+    ncol = 3
+  ) +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dashed",
+    linewidth = 0.5
+  ) +
+  geom_text(
+    data = negative_pct,
+    aes(
+      x = -0.95,
+      y = Inf,
+      label = paste0(
+        "Negative: \n",
+        round(pct_negative, 1),
+        "%"
+      )
+    ),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1.5,
+    size = 4
+  ) +
+  scale_x_continuous(
+    limits = c(-1, 1),
+    breaks = seq(-1, 1, by = 0.5)
+  ) +
+  labs(
+    x = "Spearman's rank correlation coefficient",
+    y = "Number of channels"
+  ) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(
+      size = 11,
+      face = "bold"
+    )
+  )
+
