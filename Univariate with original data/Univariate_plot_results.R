@@ -166,6 +166,7 @@ library(dlm)
 # Store variance reduction for each electrode
 var_reduction_uni <- vector("list", 64)
 
+# This loop takes a lot of time.
 for (j in 1:64) {
   
   # Matrix to store VRR for the 760 trials
