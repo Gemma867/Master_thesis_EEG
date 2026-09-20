@@ -372,25 +372,6 @@ for (Fs in Fs_values) {
 
 df_plot <- bind_rows(results_freq_bands)
 
-# Histogram
-
-ggplot(df_plot, aes(change_pct)) +
-  geom_histogram(bins = 30, color = "black", fill = "darkolivegreen3") +
-  geom_vline(
-    xintercept = 0,
-    color = "black",
-    linetype = "dashed",
-    linewidth = 0.5
-  ) +
-  #scale_x_continuous(breaks = seq(-100, 100, by = 20))+
-  facet_grid(cols = vars(band))+
-  theme_minimal() +
-  labs(
-    x = "Change in band power (%)",
-    y = "Count",
-    title = paste0("p=",p)
-  )
-
 # Boxplot
 
 df_plot$Fs <- factor(
@@ -407,7 +388,6 @@ ggplot(
   )
 ) +
   geom_boxplot(
-    alpha = 0.6,
     color = "black"
   ) +
   facet_grid(
