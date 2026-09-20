@@ -1,9 +1,8 @@
 
 # This .R shows the code to compute the VRR and power reduction metrics. 
 # For the VRR, one figure with boxplots in function of the sampling frequency (fs) is coded. The p and list of models must be changed accordingly.
-# For the power reduction, two figures (histograms and boxplots in function of the wavebands) are coded. The Fs, p and list of models must be changed accordingly.
+# For the power reduction, two figures (boxplots in function of the wavebands) are coded. The fs, p and list of models must be changed accordingly.
 
-# Loading of parameters estimations.
 
 library(dplyr)
 library(ggplot2)
@@ -15,6 +14,7 @@ library(readxl)
 
 EEGtrial <- readRDS("matrices.rds")
 
+# Loading of parameters estimations.
 parameters_trials_notfull_p3_phi<-readRDS("parameters/parameters_trials_notfull_p3_phi.rds")
 parameters_trials_notfull_p5_phi<-readRDS("parameters/parameters_trials_notfull_p5_phi.rds")
 parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds")
@@ -30,8 +30,8 @@ parameters_trials_notfull_p5_phi_250<-readRDS("parameters/parameters_trials_notf
 parameters_trials_notfull_p7_phi_250<-readRDS("parameters/parameters_trials_notfull_p7_phi_250.rds")
 parameters_trials_notfull_p1_phi_250<-readRDS("parameters/parameters_trials_notfull_p1_phi_250.rds")
 
-channels_index <- c(24, 27,  8, 57, 39)
-trials <-  c(1, 2, 4, 5, 21, 223)
+channels_index <- c(24, 27,  8, 57, 39) # index channels selected
+trials <-  c(1, 2, 4, 5, 21, 223) # index trials selected
 
 #Computation of VRR
 
