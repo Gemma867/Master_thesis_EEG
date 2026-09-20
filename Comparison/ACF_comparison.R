@@ -29,41 +29,41 @@ for (tn in trial_n) {
     # Same selected channels for both models
     y <- eeg_data[, idx[1:p]]
     
-    # --------------------------------------------------
-    # FULL MODEL
-    # --------------------------------------------------
-    
+    # The first model is fitted.
+
+    # Filter
     dlmM1 <- buildSignal(
       parameters_6trials_junt[[tn]][[ch]]
     )
-    
+
+    # Smoother
     eegSmo <- dlmSmooth(y, dlmM1)
     
     signal <- dropFirst(eegSmo$s)
     residuals <- y[, 1] - signal
-    
+
+    # ACF computed up to 500 lags
     acf_result <- acf(
       residuals,
       lag.max = 500,
       plot = FALSE
     )
-    
-    conf <- 2 / sqrt(acf_result$n.used)
+
+    # confidence bands
+    conf <- 1.96 / sqrt(acf_result$n.used)
     
     acf_data[[length(acf_data) + 1]] <- data.frame(
-      lag = acf_result$lag[, 1, 1],
-      acf = acf_result$acf[, 1, 1],
-      conf_low = -conf,
-      conf_high = conf,
+      lag = acf_result$lag[, 1, 1], # lag
+      acf = acf_result$acf[, 1, 1], # corresponding acf value
+      conf_low = -conf, # low confidence band limit
+      conf_high = conf, # high confidence band limit
       channel = ordenSensores$electrode[ch],
       trial = trials[tn],
-      model = "First model"
+      model = "First model"  # factor to indicate the model
     )
     
     
-    # --------------------------------------------------
-    # NOT-FULL MODEL
-    # --------------------------------------------------
+    # The second model is fitted.
     
     dlmM1 <- buildSignalnotfullphineq0(
       parameters_trials_notfull_p7_phi[[tn]][[ch]]
@@ -89,13 +89,14 @@ for (tn in trial_n) {
       conf_high = conf,
       channel = ordenSensores$electrode[ch],
       trial = trials[tn],
-      model = "Modified model"
+      model = "Modified model" # factor to indicate the model
     )
   }
 }
 
 acf_df <- bind_rows(acf_data)
 
+# "trial_model" is a column factor created to control the order the ACF plots displayed
 acf_df$trial_model <- paste(
   "Trial", acf_df$trial, acf_df$model
 )
@@ -118,6 +119,7 @@ acf_df$model <- factor(
   levels = c("First model", "Modified model")
 )
 
+# Plot
 pl <- ggplot(acf_df, aes(x = lag, y = acf)) +
   
   geom_hline(
