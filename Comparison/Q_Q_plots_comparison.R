@@ -6,13 +6,14 @@
 library(ggplot2)
 library(dplyr)
 
-EEGtrial <- readRDS("matrices.rds")
+EEGtrial <- readRDS("matrices.rds") # eeg data
+source("Functions.R") # Kalman filter functions
 
-parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds")
-parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds")
+parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds") # parameters second model
+parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds") # parameters first model
 
-channels_index <- c(24, 27,  8, 57, 39)
-trials <-  c(1, 2, 4, 5, 21, 223)
+channels_index <- c(24, 27,  8, 57, 39) # index channels selected
+trials <-  c(1, 2, 4, 5, 21, 223) # index trials selected
 
   
 
