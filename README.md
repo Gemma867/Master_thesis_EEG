@@ -179,6 +179,6 @@ Univariate with original data/
 
 ## Reproducibility
 
-The analyses are implemented in R. The scripts should be run from their corresponding directories, or with the working directory appropriately configured so that the required functions, parameter files, and output directories can be located.
+The analyses are implemented in R. The scripts should be run from their corresponding directories, or with the working directory appropriately configured so that the required functions files and parameter files can be located.
 
 The saved `.rds` files and the contents of the `parameters` directories contain previously estimated model parameters and can be used to reproduce the subsequent analyses without refitting the models.
