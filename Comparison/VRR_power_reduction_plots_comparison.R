@@ -3,17 +3,19 @@ library(ggplot2)
 library(dplyr)
 library(dlm)
 
-EEGtrial <- readRDS("matrices.rds")
-source("Functions.R")
+EEGtrial <- readRDS("matrices.rds") # eeg data
+source("Functions.R") # Kalman filter functions
 
-parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds")
-parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds")
+parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds") # parameters second model
+parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds") # parameters first model
 
-channels_index <- c(24, 27,  8, 57, 39)
-trials <-  c(1, 2, 4, 5, 21, 223)
+channels_index <- c(24, 27,  8, 57, 39) # index channels selected
+trials <-  c(1, 2, 4, 5, 21, 223) # index trials selected
 
-trial_n <- 1:6
+trial_n <- 1:6 # trials indexes in "trials" vector. Change to select the trials to plot.
 p <- 7
+
+#### Scatter VRR plot
 
 vrr_data <- list()
 
@@ -27,9 +29,7 @@ for (tn in trial_n) {
     
     y <- eeg_data[, idx[1:p]]
     
-    # ==================================================
-    # FULL MODEL
-    # ==================================================
+    # The first model is fitted and the variance reduction (vrr) computed.
     
     dlmM1 <- buildSignal(
       parameters_6trials_junt[[tn]][[ch]]
@@ -42,11 +42,13 @@ for (tn in trial_n) {
     vrr_full <- (
       var(y[, 1]) - var(signal_full)
     ) / var(y[, 1]) * 100
+
+    cor_full <- cor(
+      y[, 1],
+      signal_full
+    )
     
-    
-    # ==================================================
-    # NOT-FULL MODEL
-    # ==================================================
+   # The second model is fitted and the variance reduction (vrr) computed.
     
     dlmM1 <- buildSignalnotfullphineq0(
       parameters_trials_notfull_p7_phi[[tn]][[ch]]
@@ -59,21 +61,25 @@ for (tn in trial_n) {
     vrr_notfull <- (
       var(y[, 1]) - var(signal_notfull)
     ) / var(y[, 1]) * 100
-    
+
+    cor_notfull <- cor(
+      y[, 1],
+      signal_notfull
+    )
     
     # Store
     vrr_data[[length(vrr_data) + 1]] <- data.frame(
       trial = trials[tn],
       channel = ordenSensores$electrode[ch],
       VRR_full = vrr_full,
-      VRR_notfull = vrr_notfull
+      VRR_notfull = vrr_notfull,
+      Cor_full = cor_full,
+      Cor_notfull = cor_notfull
     )
   }
 }
 
 vrr_df <- bind_rows(vrr_data)
-
-#### Scatter VRR plot
 
 p1<-ggplot(vrr_df, aes(x = VRR_full, y = VRR_notfull)) +
   
@@ -110,70 +116,10 @@ p1<-ggplot(vrr_df, aes(x = VRR_full, y = VRR_notfull)) +
 
 p1
 
-#### Scatter correlation plot
-
-cor_data <- list()
-
-for (tn in 1:6) {
-  
-  eeg_data <- t(EEGtrial[[trials[tn]]])
-  
-  for (ch in channels_index) {
-    
-    idx <- order(cor(eeg_data)[, ch], decreasing = TRUE)
-    
-    y <- eeg_data[, idx[1:p]]
-    
-    # ==================================================
-    # FULL MODEL
-    # ==================================================
-    
-    dlmM1 <- buildSignal(
-      parameters_6trials_junt[[tn]][[ch]]
-    )
-    
-    eegSmo <- dlmSmooth(y, dlmM1)
-    
-    signal_full <- dropFirst(eegSmo$s)
-    
-    cor_full <- cor(
-      y[, 1],
-      signal_full
-    )
-    
-    
-    # ==================================================
-    # NOT-FULL MODEL
-    # ==================================================
-    
-    dlmM1 <- buildSignalnotfullphineq0(
-      parameters_trials_notfull_p7_phi[[tn]][[ch]]
-    )
-    
-    eegSmo <- dlmSmooth(y, dlmM1)
-    
-    signal_notfull <- dropFirst(eegSmo$s)
-    
-    cor_notfull <- cor(
-      y[, 1],
-      signal_notfull
-    )
-    
-    
-    # Store
-    cor_data[[length(cor_data) + 1]] <- data.frame(
-      trial = trials[tn],
-      channel = ordenSensores$electrode[ch],
-      Cor_full = cor_full,
-      Cor_notfull = cor_notfull
-    )
-  }
-}
-
-cor_df <- bind_rows(cor_data)
+#### Scatter correlation between original and denoised plot
 
 p2<-ggplot(
-  cor_df,
+  vrr_df,
   aes(x = Cor_full, y = Cor_notfull)
 ) +
   
