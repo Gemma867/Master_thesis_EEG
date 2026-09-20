@@ -13,6 +13,7 @@ library(dlm)
 # Local level:
 
 source("Functions_univariate_original.R")
+EEGtrial<-readRDS("matrices.rds")
 
 # Estimation of parameters for 760 trials and 64 channels
 
