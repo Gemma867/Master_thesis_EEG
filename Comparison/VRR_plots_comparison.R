@@ -208,4 +208,186 @@ p2<-ggplot(
   )
 
 p2
+
+### Boxplot band power reduction comparison between first and second model
+
+p <- 7
+Fs <- 1000 # sampling frequency
+
+# Models and corresponding build functions
+models <- list(
+  "First model" = list(
+    pars = parameters_6trials_junt,
+    build = buildSignal
+  ),
+  "Modified model" = list(
+    pars = parameters_trials_notfull_p7_phi,
+    build = buildSignalnotfullphineq0
+  )
+)
+
+# Frequency bands
+bands <- data.frame(
+  band = c("Delta", "Theta", "Alpha", "Beta"),
+  low  = c(0.5, 4, 8, 13) / Fs,
+  high = c(4, 8, 13, 30) / Fs
+)
+
+results_freq_bands <- list()
+
+for (model_name in names(models)) {
+  
+  model <- models[[model_name]]
+  
+  for (n in seq_along(trials)) {
+    
+    trial <- trials[n]
+    eeg_data <- t(EEGtrial[[trial]])
+    
+    for (ch in channels_index) {
+      
+      idx <- order(
+        cor(eeg_data)[, ch],
+        decreasing = TRUE
+      )
+      
+      # Select p channels
+      y <- eeg_data[, idx[1:p], drop = FALSE]
+      
+      # Reference channel only for p = 1
+      if (p == 1) {
+        y <- matrix(y[, 1], ncol = 1)
+      }
+      
+      # Build model
+      dlmM1 <- model$build(
+        model$pars[[n]][[ch]]
+      )
+      
+      # Smooth
+      eegSmo <- dlmSmooth(y, dlmM1)
+      
+      # Reference channel
+      if (p == 1) {
+        original <- y[, 1]
+      } else {
+        original <- y[, 1]
+      }
+      
+      # Denoised signal
+      denoised <- dropFirst(eegSmo$s)
+      
+      # Spectrum
+      sp_orig <- spectrum(
+        original,
+        plot = FALSE,
+        detrend = TRUE
+      )
+      
+      sp_den <- spectrum(
+        denoised,
+        plot = FALSE,
+        detrend = TRUE
+      )
+      
+      # Band powers
+      orig <- mapply(
+        band_power,
+        MoreArgs = list(sp = sp_orig),
+        bands$low,
+        bands$high
+      )
+      
+      den <- mapply(
+        band_power,
+        MoreArgs = list(sp = sp_den),
+        bands$low,
+        bands$high
+      )
+      
+      orig_total <- total_power(sp_orig)
+      den_total <- total_power(sp_den)
+      
+      # Store
+      results_freq_bands[[length(results_freq_bands) + 1]] <-
+        data.frame(
+          trial = trial,
+          channel = ch,
+          Fs = Fs,
+          model = model_name,
+          band = bands$band,
+          original = orig,
+          denoised = den,
+          rel_orig = orig / orig_total,
+          rel_denoised = den / den_total,
+          change_pct = 100 * (orig - den) / orig
+        )
+    }
+  }
+}
+
+df_plot <- bind_rows(results_freq_bands)
+
+df_plot$trial <- factor(
+  df_plot$trial,
+  levels = c(1, 2, 4, 5, 21, 223)
+)
+
+df_plot$band <- factor(
+  df_plot$band,
+  levels = c("Delta", "Theta", "Alpha", "Beta"),
+  labels = c(
+    "Delta (0.5–4 Hz)",
+    "Theta (4–8 Hz)",
+    "Alpha (8–13 Hz)",
+    "Beta (13–30 Hz)"
+  )
+)
+
+df_plot$model <- factor(
+  df_plot$model,
+  levels = c("First model", "Modified model")
+)
+
+# Plot
+ggplot(
+  df_plot,
+  aes(
+    x = model,
+    y = change_pct,
+    fill = model
+  )
+) +
+  geom_boxplot(
+    #alpha = 0.6,
+    color = "black"
+  ) +
+  geom_hline(
+    yintercept = 0,
+    color = "black",
+    linetype = "dashed",
+    linewidth = 0.5
+  ) +
+  facet_grid(
+    cols = vars(band)
+  ) +
+  scale_y_continuous(
+    limits = c(-20, 75),
+    breaks = seq(-20, 75, by = 10)
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 12),
+    axis.title = element_text(size = 13),
+    panel.spacing = unit(0.2, "lines"),
+    strip.background = element_blank(),
+    strip.text = element_text(size = 13),
+    legend.position = "none"
+  ) +
+  labs(
+    x = "",
+    y = "Band power reduction (%)"
+  )
+
  
