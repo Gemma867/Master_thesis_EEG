@@ -15,21 +15,25 @@ trials <-  c(1, 2, 4, 5, 21, 223) # index trials selected
 trial_n <- 1:6 # trials indexes in "trials" vector. Change to select the trials to plot.
 p <- 7
 
-#### Scatter VRR plot
+#### Scatter VRR plot and correlation between original and denoised plot of first against second model
 
+# list to store the results
 vrr_data <- list()
 
+# loop over the six trials
 for (tn in trial_n) {
   
   eeg_data <- t(EEGtrial[[trials[tn]]])
-  
+
+  # loop over the channels
   for (ch in channels_index) {
-    
+
+    # index of the ordered channels in function of correlation with reference "ch" channel
     idx <- order(cor(eeg_data)[, ch], decreasing = TRUE)
     
     y <- eeg_data[, idx[1:p]]
     
-    # The first model is fitted and the variance reduction (vrr) computed.
+    # The first model is fitted and the variance reduction and correlation are computed.
     
     dlmM1 <- buildSignal(
       parameters_6trials_junt[[tn]][[ch]]
@@ -38,11 +42,13 @@ for (tn in trial_n) {
     eegSmo <- dlmSmooth(y, dlmM1)
     
     signal_full <- dropFirst(eegSmo$s)
-    
+
+    # variance reduction
     vrr_full <- (
       var(y[, 1]) - var(signal_full)
     ) / var(y[, 1]) * 100
 
+    # correlation 
     cor_full <- cor(
       y[, 1],
       signal_full
