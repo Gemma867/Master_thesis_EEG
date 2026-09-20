@@ -4,6 +4,7 @@ library(dplyr)
 library(dlm)
 
 EEGtrial <- readRDS("matrices.rds")
+source("Functions.R")
 
 parameters_trials_notfull_p7_phi<-readRDS("parameters/parameters_trials_notfull_p7_phi.rds")
 parameters_6trials_junt <- readRDS("parameters/parameters_6trials_junt.rds")
