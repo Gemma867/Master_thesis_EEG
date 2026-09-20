@@ -32,16 +32,16 @@ chan_coords <- data.frame(
 
 #### Boxplot of mean general statistics per channel (1st quartile, 3rd quartile, minimum, maximum, median)
 
-def_total_real_list <- readRDS("def_total_real_list.rds") # List of 64 elements (channels) with dataframes of 3000 rows (samples) and 761 columns (time + 760 trials). Obtained from EEGtrial.
-general_statistics <-data.frame(channel=ordenSensores$electrode) # list to store the mean IQR
+def_total_real_list <- readRDS("def_total_real_list.rds") # List of 64 elements (channels) with dataframes of 3000 rows (samples) and 761 columns (time + 760 trials). Obtained from EEGtrial, and easier to manipulate. Only used in the exploratory analysis.
+general_statistics <-data.frame(channel=ordenSensores$electrode) # list to store the statistics computed below.
 
 for (i in 1:64){
-  q25<-mean(apply(def_total_real_list[[i]][, -1], 2, function(x) quantile(x, 0.25)))
-  q75<-mean(apply(def_total_real_list[[i]][, -1], 2, function(x) quantile(x, 0.75)))
-  min<-mean(apply(def_total_real_list[[i]][, -1], 2, min))
-  max<-mean(apply(def_total_real_list[[i]][, -1], 2, max))
-  median<-mean(apply(def_total_real_list[[i]][, -1], 2, median))
-  IQR<-q75-q25
+  q25<-mean(apply(def_total_real_list[[i]][, -1], 2, function(x) quantile(x, 0.25))) # mean 25th quantile for each channels over the 760 trials
+  q75<-mean(apply(def_total_real_list[[i]][, -1], 2, function(x) quantile(x, 0.75))) # mean 75th quantile for each channels over the 760 trials
+  min<-mean(apply(def_total_real_list[[i]][, -1], 2, min)) # mean min for each channels over the 760 trials
+  max<-mean(apply(def_total_real_list[[i]][, -1], 2, max))# mean max for each channels over the 760 trials
+  median<-mean(apply(def_total_real_list[[i]][, -1], 2, median)) # mean mean for each channels over the 760 trials
+  IQR<-q75-q25 # mean IQR for each channels over the 760 trials
   
   general_statistics$IQR[i]<-IQR
   general_statistics$q25[i] <- q25
