@@ -202,7 +202,7 @@ cor_df <- lapply(EEGtrial, function(mat) cor(t(mat)))
 z_df <- lapply(cor_df, atanh)
 # Mean Fisher Z
 mean_z <- Reduce("+", z_df) / length(z_df)
-# Transform back to correlations
+# Transform back to the correlation scale
 mean_cor <- tanh(mean_z)
 
 chan_coords$corFP1 <- mean_cor[43,] # Fp1 channel mean correlation
