@@ -10,6 +10,14 @@ library(dplyr)
 library(gsignal)
 library(dlm)
 
+params_univariate_process_matrix_def <- readRDS("params_univariate_process_matrix_def.rds") # parameters estimated of the univariate model (phi>1).
+# sensor names and order corresponding to the order of EEG data list
+ordenSensores <- read_excel("ordenSensores.xls", col_names = FALSE)
+names(ordenSensores)<-c("electrode")
+# EEG data list
+EEGtrial <- readRDS("matrices.rds")
+source("Functions_univariate_original.R")
+
 # Boxplot of measurement or process noise covariance per channel
 
 # Create long-format data frame from the estimated parameters
