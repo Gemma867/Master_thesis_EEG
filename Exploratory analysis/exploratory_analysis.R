@@ -197,7 +197,7 @@ ggplot(df_long, aes(x = time, y = amplitude_offset)) +
 
 #### Example of electrode layout correlation plot
 
-cor_df <- lapply(matrices, function(mat) cor(t(mat)))
+cor_df <- lapply(EEGtrial, function(mat) cor(t(mat)))
 # Fisher Z transformation
 z_df <- lapply(cor_df, atanh)
 # Mean Fisher Z
