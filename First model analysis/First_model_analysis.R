@@ -22,6 +22,8 @@ p<-7
 results <- vector("list", length(trials))
 names(results) <- trials
 
+# This loop will compute the variance, variance reduction, correaltion between original and denoised, minimum correlation among selected channels, among other statistics not used.
+# The resulting dataframe will be used to compute the variance reduction plots, and the ggpairs plot relating the statistics mentioned above.
 for (n in seq_along(trials)) {
   
   trial <- trials[n]
@@ -50,13 +52,13 @@ for (n in seq_along(trials)) {
     
     senyal <- dropFirst(eegSmo$s)
     
-    # Correlation original vs reconstructed
+    # Correlation original vs denoised
     cor_og_trial[ch] <- cor(senyal, eeg_data[, idx[1]])
     
     # Variance
     var_trial[ch] <- var(eeg_data[, idx[1]])
     
-    # Variance change %
+    # Variance reduction
     varch_trial[ch] <-
       (var_trial[ch] - var(senyal)) / var_trial[ch] * 100
     
@@ -512,7 +514,7 @@ for (i in seq_along(chs)) {
 
 wrap_plots(plots, ncol = 4)
 
-#### Histogram power reduction
+#### Violin + boxplot of band power reduction
 
 # Definition of upper and lower limits bands
 Fs=1000 # sampling frequency
@@ -598,71 +600,69 @@ for (n in seq_along(trials)) {
   results_freq_bands[[n]] <- trial_results
 }
 
-## Per waveband
-
-ggplot(df_plot, aes(change_pct)) +
-  geom_histogram(bins = 30, color = "black", fill = "darkolivegreen3") +
-  geom_vline(
-    xintercept = 0,
-    color = "black",
-    linetype = "dashed",
-    linewidth = 0.5
-  ) +
-  scale_x_continuous(breaks = seq(-100, 100, by = 20))+
-  facet_grid(cols = vars(band))+
-  theme_minimal() +
-  labs(
-    x = "Change in band power (%)",
-    y = "Count"
-  )
-
-
-## Per trial and waveband
-
-library(dplyr)
-library(purrr)
-library(ggplot2)
-
-df_plot <- bind_rows(results_freq_bands)
+# Transform into dataframe
+df_plot <- do.call(rbind, results_freq_bands)
 
 df_plot$band <- factor(
   df_plot$band,
   levels = c("Delta", "Theta", "Alpha", "Beta")
 )
 
-df_plot <- df_plot %>% filter(band %in% c("Delta", "Theta", "Alpha", "Beta"))
+## Violin plot per waveband
 
-medians <- df_plot %>%
-  group_by(trial, band) %>%
-  summarise(
-    median = median(change_pct, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-
-ggplot(df_plot, aes(change_pct)) +
-  geom_histogram(bins = 30, color = "black", fill = "coral") +
-  geom_vline(
-    data = medians,
-    aes(xintercept = median),
-    color = "red",
-    linetype = "dashed",
-    linewidth = 0.5
-  ) +
-  geom_vline(
-    xintercept = 0,
+ggplot(df_plot, aes(x = factor(band), y = change_pct, fill = trial)) +
+  geom_violin(trim = FALSE, color = "black", fill = "darkolivegreen3") +
+  geom_boxplot(
+    width = 0.1,
+    fill = "white",
     color = "black",
-    linetype = "dashed",
-    linewidth = 0.5
+    outlier.shape = NA
   ) +
-  scale_x_continuous(breaks = seq(-100, 100, by = 20))+
-  facet_grid(rows = vars(trial), cols = vars(band))+
-  theme_minimal() +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    color = "black"
+  ) +
+  #facet_wrap(~ band, nrow = 1, ncol = 4) +
   labs(
-    x = "Change in band power (%)",
-    y = "Count"
+    x = "Trial",
+    y = "Band power reduction (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
   )
 
+### Per waveband and trial
+
+ggplot(df_plot, aes(x = factor(trial), y = change_pct, fill = trial)) +
+  geom_violin(trim = FALSE, color = "black", fill = "darkolivegreen3") +
+  geom_boxplot(
+    width = 0.1,
+    fill = "white",
+    color = "black",
+    outlier.shape = NA
+  ) +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    color = "black"
+  ) +
+  facet_wrap(~ band, nrow = 2, ncol = 2) +
+  labs(
+    x = "Trial",
+    y = "Band power reduction (%)"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "none",
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
+  )
 
 #### Plot of signals in black and denoised signal in red
 
