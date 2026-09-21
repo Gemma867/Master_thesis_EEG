@@ -1,8 +1,14 @@
 
 # This .R file contains the code to obtain the ACF plots of the first and second model comparison with p=7 and fs=1000 Hz.
 
+library(GGally)
 library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
 library(dplyr)
+library(gsignal)
+library(dlm)
 
 EEGtrial <- readRDS("matrices.rds") # eeg data
 source("Functions.R") # Kalman filter functions
