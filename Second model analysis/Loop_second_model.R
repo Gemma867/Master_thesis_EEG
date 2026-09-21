@@ -3,12 +3,19 @@
 # This .R file contains the loops to store the parameters estimated for each set of signals in function of the sampling frequency (fs) and number of neighbors (p-1).
 
 
-library(signal)
-library(dlm)
+library(GGally)
+library(ggplot2)
+library(tidyr)
+library(zoo)
 library(readxl)
+library(dplyr)
+library(gsignal)
+library(dlm)
+library(signal)
 
 ordenSensores <- read_excel("ordenSensores.xls", col_names = FALSE) # read .xls with the names of the electrodes
 names(ordenSensores)<-c("electrode")
+chan_names<-ordenSensores$electrode
 EEGtrial <- readRDS("matrices.rds") # read EEG data
 trials <- c(1,2,4,5,21,223) # vector with trials to consider
 channels_index <- c(24, 27,  8, 57, 39)  # channel indexes to consider
