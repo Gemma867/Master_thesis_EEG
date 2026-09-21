@@ -11,6 +11,10 @@ library(gsignal)
 library(dlm)
 
 source("Functions.R") # functions to build the filter
+# sensor names and order corresponding to the order of EEG data list
+ordenSensores <- read_excel("ordenSensores.xls", col_names = FALSE)
+names(ordenSensores)<-c("electrode")
+chan_names<-ordenSensores$electrode
 
 trials <- c(1,2,4,5,21,223) # index of trials selected
 p <- 7
