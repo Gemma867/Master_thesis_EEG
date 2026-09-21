@@ -1,15 +1,23 @@
 
 # This .R file contains the code to estimate the parameters of the Kalman filter with function buildSignal() for the 6 trials selected and the 64 channels.
 
+library(GGally)
+library(ggplot2)
+library(tidyr)
+library(zoo)
+library(readxl)
+library(dplyr)
+library(gsignal)
 library(dlm)
-source("Functions.R")
 
-trials <- c(1,2,4,5,21,223)
+source("Functions.R") # functions to build the filter
+
+trials <- c(1,2,4,5,21,223) # index of trials selected
 p <- 7
 parameters_6trials_junt <- list()
-EEGtrial <- readRDS("matrices.rds")
+EEGtrial <- readRDS("matrices.rds") # eeg data
 
-npar <-(p*p + p)/2 + 1
+npar <-(p*p + p)/2 + 1 # number of parameters to estimate
 
 for (trial in trials){
   
